@@ -59,26 +59,6 @@ impl TelegramMessage for TitleSearchItem {
             ParseMode::Html => {
                 let title = self.title();
 
-                let directors_text = self
-                    .directors()
-                    .iter()
-                    .map(|d| {
-                        d.name()
-                            .to_html_hyperlink(&format!("https://www.imdb.com{}", d.link()))
-                    })
-                    .collect::<Vec<String>>()
-                    .join(", ");
-
-                let stars_text = self
-                    .stars()
-                    .iter()
-                    .map(|d| {
-                        d.name()
-                            .to_html_hyperlink(&format!("https://www.imdb.com{}", d.link()))
-                    })
-                    .collect::<Vec<String>>()
-                    .join(", ");
-
                 let people_text = self.join_peoples(
                     |g| format!("- {}: ", g),
                     "\n",
