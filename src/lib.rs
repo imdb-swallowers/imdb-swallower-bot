@@ -79,8 +79,18 @@ impl TelegramMessage for TitleSearchItem {
                     .collect::<Vec<String>>()
                     .join(", ");
 
+                let people_text = self.join_peoples(
+                    |g| format!("- {}: ", g),
+                    "\n",
+                    |p| {
+                        p.name()
+                            .to_html_hyperlink(&format!("https://www.imdb.com{}", p.link()))
+                    },
+                    ", ",
+                );
+
                 format!(
-                    "🍿 {} {}\n[{}]\n⭐ Rating: {}\n\n- {}\n\n- Director(s): {}\n- Star(s): {}",
+                    "🍿 {} {}\n[{}]\n⭐ Rating: {}\n\n- {}\n\n{}",
                     title.text().to_html_hyperlink(
                         format!("https://www.imdb.com{}", title.link()).as_ref()
                     ),
@@ -88,8 +98,7 @@ impl TelegramMessage for TitleSearchItem {
                     self.info(),
                     self.rating().to_html_code(),
                     self.summery(),
-                    directors_text,
-                    stars_text
+                    people_text
                 )
             }
             _ => todo!(),
