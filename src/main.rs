@@ -13,6 +13,8 @@ use teloxide::{
 
 use dotenv::dotenv;
 
+use imdb_swallower_bot::TelegramMessage;
+
 #[derive(BotCommands, PartialEq, Debug, Clone)]
 #[command(rename = "kebab-case")]
 enum Commands {
@@ -33,6 +35,9 @@ async fn main() {
                 .endpoint(on_commands),
         )
         .branch(Update::filter_inline_query().endpoint(on_inline_query));
+
+    let me = bot.get_me().await.unwrap();
+    println!("Listening to @{}", me.username());
 
     Dispatcher::builder(bot, handler)
         .dependencies(dptree::deps![imdb_engine])
@@ -87,7 +92,12 @@ async fn on_inline_query(
         results.push(InlineQueryResult::Article(InlineQueryResultArticle::new(
             i.to_string(),
             item.title().text(),
-            InputMessageContent::Text(InputMessageContentText::new(item.to_string())),
+            InputMessageContent::Text(
+                InputMessageContentText::new(
+                    item.to_telegram_message(teloxide::types::ParseMode::Html),
+                )
+                .parse_mode(teloxide::types::ParseMode::Html),
+            ),
         )));
     }
 
